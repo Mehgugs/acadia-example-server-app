@@ -1,0 +1,33 @@
+[tools]
+node = "latest"
+pnpm = "latest"
+[tools.elm]
+version = "0.19.3"
+platforms.windows-x64.strip_components = 1
+platforms.windows-x64.bin = "elm.exe"
+platforms.asset_pattern = "elm-{{ version }}-{{ os() }}-{{ arch() }}.gz"
+
+[tools."http:acadia"]
+version="0.3.1"
+url="https://get.acadia.engineering/acadia-{{ version }}-{{ os() }}-{{ arch() }}.gz"
+platforms.windows-x64.strip_components = 1
+platforms.windows-x64.bin = "acadia.exe"
+
+[env]
+ELM_HOME="./elm-home/elm-stuff"
+
+[tasks.build]
+description="Compiles the acadia and elm code, generating asset definitions for each elm page."
+run="node ./server/build.js"
+
+[tasks.acadia-serve]
+description="Run the acadia server."
+run="acadia serve"
+
+[tasks.elm-simple-server]
+description="Run the node.js backed elm server."
+run="node ./server/server.js"
+
+[tasks.server]
+depends=["build"]
+run = [{tasks = ["acadia-serve", "elm-simple-server"]}]
